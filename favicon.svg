@@ -1,0 +1,77 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='1 1 62 62'>
+  <!-- 60 hue segments, 6° each, OKHSL S=100 L=66, each runs 1° long (last one exact) -->
+  <g fill='none' stroke-width='11'>
+    <path stroke='#FF5E9C' d='M32 9.5A22.5 22.5 0 0 1 34.74 9.66'/>
+    <path stroke='#FF618E' d='M34.35 9.62A22.5 22.5 0 0 1 37.06 10.07'/>
+    <path stroke='#FF6481' d='M36.68 9.99A22.5 22.5 0 0 1 39.32 10.72'/>
+    <path stroke='#FF6674' d='M38.95 10.6A22.5 22.5 0 0 1 41.51 11.61'/>
+    <path stroke='#FF6966' d='M41.15 11.45A22.5 22.5 0 0 1 43.59 12.71'/>
+    <path stroke='#FF6A57' d='M43.25 12.51A22.5 22.5 0 0 1 45.55 14.03'/>
+    <path stroke='#FF6C44' d='M45.23 13.8A22.5 22.5 0 0 1 47.35 15.54'/>
+    <path stroke='#FF6E2B' d='M47.06 15.28A22.5 22.5 0 0 1 48.98 17.24'/>
+    <path stroke='#FC7200' d='M48.72 16.95A22.5 22.5 0 0 1 50.43 19.1'/>
+    <path stroke='#F27C00' d='M50.2 18.78A22.5 22.5 0 0 1 51.69 21.09'/>
+    <path stroke='#E98300' d='M51.49 20.75A22.5 22.5 0 0 1 52.71 23.21'/>
+    <path stroke='#E18900' d='M52.55 22.85A22.5 22.5 0 0 1 53.52 25.42'/>
+    <path stroke='#DA8E00' d='M53.4 25.05A22.5 22.5 0 0 1 54.09 27.7'/>
+    <path stroke='#D29300' d='M54.01 27.32A22.5 22.5 0 0 1 54.42 30.04'/>
+    <path stroke='#CB9700' d='M54.38 29.65A22.5 22.5 0 0 1 54.5 32.39'/>
+    <path stroke='#C49B00' d='M54.5 32A22.5 22.5 0 0 1 54.34 34.74'/>
+    <path stroke='#BC9F00' d='M54.38 34.35A22.5 22.5 0 0 1 53.93 37.06'/>
+    <path stroke='#B4A300' d='M54.01 36.68A22.5 22.5 0 0 1 53.28 39.32'/>
+    <path stroke='#ABA700' d='M53.4 38.95A22.5 22.5 0 0 1 52.39 41.51'/>
+    <path stroke='#A0AB00' d='M52.55 41.15A22.5 22.5 0 0 1 51.29 43.59'/>
+    <path stroke='#94AF00' d='M51.49 43.25A22.5 22.5 0 0 1 49.97 45.55'/>
+    <path stroke='#85B300' d='M50.2 45.23A22.5 22.5 0 0 1 48.46 47.35'/>
+    <path stroke='#70B800' d='M48.72 47.06A22.5 22.5 0 0 1 46.77 48.98'/>
+    <path stroke='#4EBE00' d='M47.06 48.72A22.5 22.5 0 0 1 44.91 50.43'/>
+    <path stroke='#00C229' d='M45.23 50.2A22.5 22.5 0 0 1 42.91 51.69'/>
+    <path stroke='#00C159' d='M43.25 51.49A22.5 22.5 0 0 1 40.79 52.71'/>
+    <path stroke='#00BF71' d='M41.15 52.55A22.5 22.5 0 0 1 38.58 53.52'/>
+    <path stroke='#00BE82' d='M38.95 53.4A22.5 22.5 0 0 1 36.3 54.09'/>
+    <path stroke='#00BC8F' d='M36.68 54.01A22.5 22.5 0 0 1 33.96 54.42'/>
+    <path stroke='#00BB9A' d='M34.35 54.38A22.5 22.5 0 0 1 31.61 54.5'/>
+    <path stroke='#00BAA4' d='M32 54.5A22.5 22.5 0 0 1 29.26 54.34'/>
+    <path stroke='#00B9AC' d='M29.65 54.38A22.5 22.5 0 0 1 26.94 53.93'/>
+    <path stroke='#00B8B4' d='M27.32 54.01A22.5 22.5 0 0 1 24.68 53.28'/>
+    <path stroke='#00B7BC' d='M25.05 53.4A22.5 22.5 0 0 1 22.49 52.39'/>
+    <path stroke='#00B6C3' d='M22.85 52.55A22.5 22.5 0 0 1 20.41 51.29'/>
+    <path stroke='#00B5CB' d='M20.75 51.49A22.5 22.5 0 0 1 18.46 49.97'/>
+    <path stroke='#00B3D2' d='M18.78 50.2A22.5 22.5 0 0 1 16.66 48.46'/>
+    <path stroke='#00B2DB' d='M16.95 48.72A22.5 22.5 0 0 1 15.02 46.77'/>
+    <path stroke='#00B0E4' d='M15.28 47.06A22.5 22.5 0 0 1 13.57 44.91'/>
+    <path stroke='#00AEEE' d='M13.8 45.23A22.5 22.5 0 0 1 12.31 42.91'/>
+    <path stroke='#00ABFA' d='M12.51 43.25A22.5 22.5 0 0 1 11.29 40.79'/>
+    <path stroke='#32A8FF' d='M11.45 41.15A22.5 22.5 0 0 1 10.48 38.58'/>
+    <path stroke='#4EA4FF' d='M10.6 38.95A22.5 22.5 0 0 1 9.91 36.3'/>
+    <path stroke='#61A1FF' d='M9.99 36.68A22.5 22.5 0 0 1 9.58 33.96'/>
+    <path stroke='#709DFF' d='M9.62 34.35A22.5 22.5 0 0 1 9.5 31.61'/>
+    <path stroke='#7C99FF' d='M9.5 32A22.5 22.5 0 0 1 9.66 29.26'/>
+    <path stroke='#8896FF' d='M9.62 29.65A22.5 22.5 0 0 1 10.07 26.94'/>
+    <path stroke='#9392FF' d='M9.99 27.32A22.5 22.5 0 0 1 10.72 24.68'/>
+    <path stroke='#9D8DFF' d='M10.6 25.05A22.5 22.5 0 0 1 11.61 22.49'/>
+    <path stroke='#A888FF' d='M11.45 22.85A22.5 22.5 0 0 1 12.71 20.41'/>
+    <path stroke='#B382FF' d='M12.51 20.75A22.5 22.5 0 0 1 14.03 18.46'/>
+    <path stroke='#BF7AFF' d='M13.8 18.78A22.5 22.5 0 0 1 15.54 16.66'/>
+    <path stroke='#CD70FF' d='M15.28 16.95A22.5 22.5 0 0 1 17.24 15.02'/>
+    <path stroke='#DC62FF' d='M16.95 15.28A22.5 22.5 0 0 1 19.1 13.57'/>
+    <path stroke='#EF49FF' d='M18.78 13.8A22.5 22.5 0 0 1 21.09 12.31'/>
+    <path stroke='#FF2AF7' d='M20.75 12.51A22.5 22.5 0 0 1 23.21 11.29'/>
+    <path stroke='#FF40DF' d='M22.85 11.45A22.5 22.5 0 0 1 25.42 10.48'/>
+    <path stroke='#FF4CCB' d='M25.05 10.6A22.5 22.5 0 0 1 27.7 9.91'/>
+    <path stroke='#FF54B9' d='M27.32 9.99A22.5 22.5 0 0 1 30.04 9.58'/>
+    <path stroke='#FF59AA' d='M29.65 9.62A22.5 22.5 0 0 1 32.03 9.5'/>
+  </g>
+  <!-- ring outer edge: ring, black, white (outward) -->
+  <g fill='none' stroke-width='1.5'>
+    <circle cx='32' cy='32' r='30.25' stroke='#fff'/>
+    <circle cx='32' cy='32' r='28.75' stroke='#000'/>
+    <!-- ring inner edge: ring, black, white (inward) -->
+    <circle cx='32' cy='32' r='18.25' stroke='#000'/>
+    <circle cx='32' cy='32' r='16.75' stroke='#fff'/>
+  </g>
+  <!-- handle: fill, black, white (outward) -->
+  <circle cx='32' cy='32' r='11.5' fill='#fff'/>
+  <circle cx='32' cy='32' r='10' fill='#000'/>
+  <circle cx='32' cy='32' r='8.5' fill='#00AAFF'/>
+</svg>

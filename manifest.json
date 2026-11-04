@@ -1,0 +1,14 @@
+{
+	"name": "OK Color Lab",
+	"description": "OKHSV and OKHSL color picker with color harmonies and contrast checks.",
+	"icons": [
+		{
+			"src": "./favicon.svg",
+			"sizes": "any"
+		}
+	],
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"background_color": "#000000"
+}

@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1">
+<title>OK Color Lab</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<!-- #region - inline style.css -->
+<style>
+:root {
+	--bg: #1e1e1e;
+	--fg: #dcdcdc;
+	--mut: #7d7d7d;
+	--card: #1e1e1e;
+	--line: #363636;
+	--acc: #ff618e;
+	--ok: #2fb36d;
+	--no: #e5484d;
+	--width: 1440px;
+}
+
+@media(prefers-color-scheme: light) {
+	:root {
+		--bg: #dbdbdb;
+		--fg: #171717;
+		--mut: #797979;
+		--card: #dbdbdb;
+		--line: #c2c2c2;
+		--acc: #d90062;
+	}
+}
+
+* {
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+}
+
+html {
+	background: var(--bg);
+	color: var(--fg);
+	color-scheme: light dark;
+	overscroll-behavior: none;
+	text-size-adjust: none;
+}
+
+body {
+	margin: 0;
+	font: 14px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+}
+
+::selection {
+	background-color: var(--fg);
+	color: var(--bg);
+}
+
+button, select {
+	cursor: pointer;
+}
+
+input:focus-visible, select:focus-visible, a:focus-visible {
+	outline: 2px solid var(--acc);
+	outline-offset: -2px;
+}
+
+button:focus-visible, input[type=range]:focus-visible {
+	outline: 2px solid var(--acc);
+	outline-offset: 2px;
+}
+
+@media(prefers-color-scheme: light) {
+	button:focus-visible {
+		outline-offset: 0px;
+	}
+}
+
+canvas:active, input[type=range]:active::-webkit-slider-thumb {
+	cursor: grabbing;
+}
+
+.app {
+	display: grid;
+	gap: 12px;
+	max-width: var(--width);
+	margin: 0 auto;
+}
+
+.col {
+	display: grid;
+	gap: 10px;
+	align-content: start;
+	min-width: 0;
+}
+
+#col0 {
+	position: relative;
+}
+
+.bar,
+.row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.seg {
+	display: inline-flex;
+	padding: 2px;
+	border: 1px solid var(--line);
+	border-radius: 10px;
+	background: var(--card);
+}
+
+.seg button {
+	font: inherit;
+	color: var(--mut);
+	background: none;
+	border: 0;
+	border-radius: 8px;
+	padding: 0 12px;
+	min-height: 36px;
+	touch-action: manipulation;
+}
+
+.seg button[aria-pressed=true] {
+	color: var(--fg);
+}
+
+.seg button:focus-visible {
+	outline: none;
+	color: var(--acc);
+}
+
+.stage {
+	position: relative;
+	aspect-ratio: 1;
+	width: 100%;
+	margin: 0 auto;
+}
+
+canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	touch-action: none;
+	user-select: none;
+	clip-path: circle(closest-side);
+}
+
+.card {
+	display: grid;
+	gap: 10px;
+	padding: 12px;
+	border: 1px solid var(--line);
+	border-radius: 14px;
+	background: var(--card);
+}
+
+.ch {
+	display: grid;
+	grid-template-columns: 2.4em 1fr 4.6em;
+	gap: 8px;
+	align-items: center;
+}
+
+.ch > b {
+	color: var(--mut);
+	font-weight: 600;
+	font-size: 12px;
+}
+
+input,
+select {
+	font: 16px system-ui, sans-serif;
+	color: inherit;
+	background: transparent;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 5px 8px;
+	min-width: 0;
+	width: 100%;
+	touch-action: manipulation;
+}
+
+select {
+	width: auto;
+	min-height: 36px;
+	background: var(--card);
+}
+
+input[type=number] {
+	text-align: right;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+	display: none;
+}
+
+input.bad {
+	border-color: var(--no);
+}
+
+input[type=range] {
+	appearance: none;
+	height: 24px;
+	padding: 0;
+	border: 0;
+	border-radius: 12px;
+	background: var(--g, #888);
+	touch-action: pan-y;
+	outline-offset: 3px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+	height: 24px;
+	background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--c, #fff);
+	border: 2px solid #fff;
+	box-shadow: inset 0 0 0 2px #000;
+	cursor: grab;
+}
+
+input[type=range]::-moz-range-track {
+	height: 24px;
+	background: transparent;
+}
+
+input[type=range]::-moz-range-thumb {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--c, #fff);
+	border: 2px solid #fff;
+	box-shadow: inset 0 0 0 2px #000;
+}
+
+.dot {
+	display: block;
+	height: 32px;
+	border-radius: 8px;
+	border: 2px solid #fff;
+	box-shadow: inset 0 0 0 2px #000;
+}
+
+.sws {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 6px;
+}
+
+.swi {
+	flex: 1 1 4.6em;
+	display: grid;
+	gap: 3px;
+	justify-items: center;
+	min-width: 0;
+}
+
+.sw {
+	width: 100%;
+	min-height: 44px;
+	font: 600 12px ui-monospace, monospace;
+	border: 2px solid #fff;
+	border-radius: 10px;
+	box-shadow: inset 0 0 0 2px #000;
+	touch-action: manipulation;
+}
+
+.lbl {
+	font-size: 11px;
+	color: var(--mut);
+	white-space: nowrap;
+}
+
+.pv {
+	padding: 12px;
+	border-radius: 10px;
+	border: 1px solid var(--line);
+	font-weight: 600;
+	font-size: 18px;
+}
+
+.res {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.big {
+	font: 700 20px ui-monospace, monospace;
+}
+
+.sub {
+	color: var(--mut);
+	font-size: 12px;
+}
+
+.chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 6px;
+}
+
+.chip {
+	font-size: 11px;
+	padding: 2px 6px;
+	border-radius: 6px;
+	color: #fff;
+}
+
+.chip.ok {
+	background: var(--ok);
+}
+
+.chip.no {
+	background: var(--no);
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	min-height: 36px;
+	margin-top: 6px;
+	padding: 0 12px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	color: var(--acc);
+	font-size: 12px;
+	font-weight: 600;
+	text-decoration: none;
+	touch-action: manipulation;
+}
+
+.note {
+	max-width: var(--width);
+	margin: 0 auto 0;
+	padding-top: 10px;
+	color: var(--mut);
+	font-size: 12px;
+}
+
+.note ul {
+	margin: 0;
+	padding-left: 1.2em;
+	display: grid;
+	gap: 4px;
+}
+
+.note a {
+	border-radius: 8px;
+	outline-offset: 2px;
+	color: var(--acc);
+}
+
+#toast {
+	position: fixed;
+	left: 50%;
+	bottom: max(16px, env(safe-area-inset-bottom));
+	transform: translate(-50%, 20px);
+	opacity: 0;
+	pointer-events: none;
+	background: #000c;
+	color: #fff;
+	padding: 8px 14px;
+	border-radius: 20px;
+	transition: .2s;
+}
+
+#toast.on {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+@media(min-width: 720px) {
+	.app {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: start;
+	}
+}
+
+@media (min-width: 1280px) {
+	#col0:not(.no-webgl) > .bar {
+		position: absolute;
+		width: 100%;
+		z-index: 1;
+	}
+}
+</style>
+<!-- #endregion -->
+</head>
+<body>
+<!-- #region - body -->
+<main class="app">
+	<div class="col" id="col0">
+		<div class="bar">
+			<div class="seg" id="modelSeg" role="group">
+				<button type="button" data-v="okhsv">OKHSV</button>
+				<button type="button" data-v="okhsl">OKHSL</button>
+			</div>
+			<div class="seg" id="viewSeg" role="group">
+				<button type="button" data-v="0">Disc</button>
+				<button type="button" data-v="1">Triangle</button>
+			</div>
+		</div>
+		<div class="stage">
+			<canvas id="cv" role="img"></canvas>
+		</div>
+	</div>
+	<div class="col" id="col1">
+		<section class="card">
+			<div class="ch">
+				<b>H</b>
+				<input type="range" id="r0" min="0" max="360" step="any">
+				<input type="number" id="n0" min="0" max="360" step="any" inputmode="decimal">
+			</div>
+			<div class="ch">
+				<b>S</b>
+				<input type="range" id="r1" min="0" max="100" step="any">
+				<input type="number" id="n1" min="0" max="100" step="any" inputmode="decimal">
+			</div>
+			<div class="ch">
+				<b id="l2">V</b>
+				<input type="range" id="r2" min="0" max="100" step="any">
+				<input type="number" id="n2" min="0" max="100" step="any" inputmode="decimal">
+			</div>
+			<div class="ch">
+				<b>HEX</b>
+				<input id="hex" maxlength="7" spellcheck="false" autocomplete="off" autocapitalize="characters">
+				<i class="dot" id="hexSw"></i>
+			</div>
+		</section>
+		<section class="card">
+			<div class="row">
+				<label for="harm"><b>Harmony</b></label>
+				<select id="harm"></select>
+			</div>
+			<div class="sws" id="sws"></div>
+		</section>
+		<section class="card">
+			<div class="row">
+				<b>Picked color is</b>
+				<div class="seg" id="roleSeg" role="group">
+					<button type="button" data-v="fg">Text</button>
+					<button type="button" data-v="bg">Background</button>
+				</div>
+			</div>
+			<div class="ch">
+				<b id="otherLab">BG</b>
+				<input id="other" maxlength="7" spellcheck="false" autocomplete="off" autocapitalize="characters">
+				<i class="dot" id="otherSw"></i>
+			</div>
+			<div class="pv" id="pv">Aa · Sample text</div>
+			<div class="res">
+				<div>
+					<div class="big" id="wc"></div>
+					<div class="sub">WCAG 2.x</div>
+					<div class="chips" id="wcc"></div>
+				</div>
+				<div>
+					<div class="big" id="ap"></div>
+					<div class="sub">APCA · <span id="apn"></span></div>
+					<a class="btn" id="apl" href="https://apcacontrast.com/" target="_blank" draggable="false">Open in APCA ↗</a>
+				</div>
+			</div>
+		</section>
+	</div>
+</main>
+<footer class="note">
+	<ul>
+		<li>
+			<b>Gamut:</b> sRGB only, no Display P3 or Rec. 2020.
+		</li>
+		<li>
+			<b>OKHSV</b> (HSV-like), max chroma at the edge: the most vivid color of each hue sits at S = V = 100%, so lightness drifts with S and V.
+		</li>
+		<li>
+			<b>OKHSL</b> (HSL-like), orthogonal lightness: L is Oklab lightness, independent of hue and saturation, so equal L looks equally light.
+		</li>
+		<li>
+			<a href="https://bottosson.github.io/posts/colorpicker/" target="_blank" draggable="false">Original post</a> by Björn Ottosson.
+		</li>
+	</ul>
+</footer>
+<div id="toast" role="status"></div>
+<!-- #endregion -->
+<!-- #region - inline script.js -->
+<script>
+(async () => {
+'use strict';
+
+// #region - utils
+const
+	TAU = Math.PI * 2,
+	$ = s => document.querySelector(s),
+	$$ = s => [...document.querySelectorAll(s)],
+	clamp01 = x => x < 0 ? 0 : x > 1 ? 1 : x,
+	wrap = x => x - Math.floor(x),
+	dot = (u, v) => u[0] * v[0] + u[1] * v[1] + u[2] * v[2],
+	hueDist = (a, b) => {
+		const d = Math.abs(a - b) % 1
+		return Math.min(d, 1 - d)
+	}
+// #endregion
+
+// #region - OKHSV & OKHSL port
+const
+	WR = [4.0767416621, -3.3077115913, 0.2309699292],
+	WG = [-1.2684380046, 2.6097574011, -0.3413193965],
+	WB = [-0.0041960863, -0.7034186147, 1.7076147010],
+	klms = (a, b) => [
+		0.3963377774 * a + 0.2158037573 * b,
+		-0.1055613458 * a - 0.0638541728 * b,
+		-0.0894841775 * a - 1.2914855480 * b,
+	],
+	K1 = .206, K2 = .03, K3 = (1 + K1) / (1 + K2),
+	toe = x => .5 * (K3 * x - K1 + Math.sqrt((K3 * x - K1) ** 2 + 4 * K2 * K3 * x)),
+	toeInv = x => (x * x + K1 * x) / (K3 * (x + K2)),
+	tf = x => x >= .0031308 ? 1.055 * x ** (1 / 2.4) - .055 : 12.92 * x,
+	tfInv = x => x >= .04045 ? ((x + .055) / 1.055) ** 2.4 : x / 12.92,
+	outRgb = v => v.map(x => clamp01(tf(Math.max(0, x))))
+
+function oklabToLin(L, a, b) {
+	const lms = klms(a, b).map(x => (L + x) ** 3)
+	return [dot(WR, lms), dot(WG, lms), dot(WB, lms)]
+}
+
+function linToOklab(r, g, b) {
+	const
+		l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b),
+		m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b),
+		s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)
+	return [
+		0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+		1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+		0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+	]
+}
+
+function maxSat(a, b) {
+	let k, w
+	if (-1.88170328 * a - 0.80936493 * b > 1) {
+		k = [1.19086277, 1.76576728, 0.59662641, 0.75515197, 0.56771245]
+		w = WR
+	}
+	else if (1.81444104 * a - 1.19445276 * b > 1) {
+		k = [0.73956515, -0.45954404, 0.08285427, 0.1254107, 0.14503204]
+		w = WG
+	}
+	else {
+		k = [1.35733652, -0.00915799, -1.1513021, -0.50559606, 0.00692167]
+		w = WB
+	}
+	const
+		S = k[0] + k[1] * a + k[2] * b + k[3] * a * a + k[4] * a * b,
+		kk = klms(a, b),
+		q = kk.map(x => 1 + S * x),
+		f = dot(w, q.map(x => x ** 3)),
+		f1 = dot(w, q.map((x, i) => 3 * kk[i] * x * x)),
+		f2 = dot(w, q.map((x, i) => 6 * kk[i] * kk[i] * x))
+	return S - (f * f1) / (f1 * f1 - 0.5 * f * f2)
+}
+
+function cusp(a, b) {
+	const
+		S = maxSat(a, b),
+		rgb = oklabToLin(1, S * a, S * b),
+		L = Math.cbrt(1 / Math.max(rgb[0], rgb[1], rgb[2]))
+	return [L, L * S]
+}
+
+function gamutT(a, b, L1, C1, L0, cu) {
+	if ((L1 - L0) * cu[1] - (cu[0] - L0) * C1 <= 0)
+		return (cu[1] * L0) / (C1 * cu[0] + cu[1] * (L0 - L1))
+	const
+		t = (cu[1] * (L0 - 1)) / (C1 * (cu[0] - 1) + cu[1] * (L0 - L1)),
+		k = klms(a, b),
+		dL = L1 - L0,
+		dt = k.map(x => dL + C1 * x),
+		q = k.map(x => L0 * (1 - t) + t * L1 + t * C1 * x),
+		lms = q.map(x => x ** 3),
+		d1 = q.map((x, i) => 3 * dt[i] * x * x),
+		d2 = q.map((x, i) => 6 * dt[i] * dt[i] * x)
+	let best = Infinity
+	for (const w of [WR, WG, WB]) {
+		const
+			f = dot(w, lms) - 1,
+			f1 = dot(w, d1),
+			f2 = dot(w, d2),
+			u = f1 / (f1 * f1 - 0.5 * f * f2)
+		if (u >= 0)
+			best = Math.min(best, -f * u)
+	}
+	return t + best
+}
+
+function getCs(L, a, b) {
+	const
+		cu = cusp(a, b),
+		Cmax = gamutT(a, b, L, 1, L, cu),
+		k = Cmax / Math.min((L * cu[1]) / cu[0], ((1 - L) * cu[1]) / (1 - cu[0])),
+		Sm = 0.11516993 + 1 / (7.4477897 + 4.1590124 * b + a * (-2.19557347 + 1.75198401 * b + a * (-2.13704948 - 10.02301043 * b + a * (-4.24894561 + 5.38770819 * b + 4.69891013 * a)))),
+		Tm = 0.11239642 + 1 / (1.6132032 - 0.68124379 * b + a * (0.40370612 + 0.90148123 * b + a * (-0.27087943 + 0.6122399 * b + a * (0.00299215 - 0.45399568 * b - 0.14661872 * a)))),
+		Ca = L * Sm,
+		Cb = (1 - L) * Tm
+	return [
+		Math.sqrt(1 / (1 / (L * 0.4) ** 2 + 1 / ((1 - L) * 0.8) ** 2)),
+		0.9 * k * Math.sqrt(Math.sqrt(1 / (1 / Ca ** 4 + 1 / Cb ** 4))),
+		Cmax,
+	]
+}
+
+function okhslToRgb(h, s, l) {
+	if (l >= 1)
+		return [1, 1, 1]
+	if (l <= 0)
+		return [0, 0, 0]
+	const
+		a = Math.cos(TAU * h),
+		b = Math.sin(TAU * h),
+		L = toeInv(l),
+		[C0, Cm, Cx] = getCs(L, a, b)
+	let C
+	if (s < 0.8) {
+		const
+			t = 1.25 * s,
+			k1 = 0.8 * C0,
+			k2 = 1 - k1 / Cm
+		C = (t * k1) / (1 - k2 * t)
+	}
+	else {
+		const
+			t = (s - 0.8) / 0.2,
+			k1 = (0.2 * Cm * Cm * 1.5625) / C0,
+			k2 = 1 - k1 / (Cx - Cm)
+		C = Cm + (t * k1) / (1 - k2 * t)
+	}
+	return outRgb(oklabToLin(L, C * a, C * b))
+}
+
+function lab(r, g, b, hf) {
+	const
+		[L, A, B] = linToOklab(tfInv(r), tfInv(g), tfInv(b)),
+		C = Math.hypot(A, B)
+	let h = hf
+	if (C > 1e-6)
+		h = wrap(Math.atan2(B, A) / TAU)
+	return [L, C, h]
+}
+
+function rgbToOkhsl(r, g, bl, hf = 0) {
+	const [L, C, h] = lab(r, g, bl, hf)
+	if (L >= 1 - 1e-7)
+		return [h, 0, 1]
+	if (L <= 1e-7)
+		return [h, 0, 0]
+	const
+		a = Math.cos(TAU * h),
+		b = Math.sin(TAU * h),
+		[C0, Cm, Cx] = getCs(L, a, b)
+	let s
+	if (C < Cm) {
+		const
+			k1 = 0.8 * C0,
+			k2 = 1 - k1 / Cm
+		s = (0.8 * C) / (k1 + k2 * C)
+	}
+	else {
+		const
+			k1 = (0.2 * Cm * Cm * 1.5625) / C0,
+			k2 = 1 - k1 / (Cx - Cm)
+		s = 0.8 + (0.2 * (C - Cm)) / (k1 + k2 * (C - Cm))
+	}
+	return [h, clamp01(s), clamp01(toe(L))]
+}
+
+function okhsvToRgb(h, s, v) {
+	if (v <= 0) return [0, 0, 0]
+	const
+		a = Math.cos(TAU * h),
+		b = Math.sin(TAU * h),
+		cu = cusp(a, b),
+		Sm = cu[1] / cu[0],
+		Tm = cu[1] / (1 - cu[0]),
+		S0 = 0.5,
+		k = 1 - S0 / Sm,
+		den = S0 + Tm - Tm * k * s,
+		Lv = 1 - (s * S0) / den,
+		Cv = (s * Tm * S0) / den
+	let
+		L = v * Lv,
+		C = v * Cv
+	const
+		Lvt = toeInv(Lv),
+		Cvt = (Cv * Lvt) / Lv,
+		Ln = toeInv(L)
+	C = (C * Ln) / L
+	L = Ln
+	const
+		rs = oklabToLin(Lvt, a * Cvt, b * Cvt),
+		sc = Math.cbrt(1 / Math.max(rs[0], rs[1], rs[2], 0))
+	return outRgb(oklabToLin(L * sc, a * C * sc, b * C * sc))
+}
+
+function rgbToOkhsv(r, g, bl, hf = 0) {
+	let [L, C, h] = lab(r, g, bl, hf)
+	if (L <= 1e-7)
+		return [h, 0, 0]
+	const
+		a = Math.cos(TAU * h),
+		b = Math.sin(TAU * h),
+		cu = cusp(a, b),
+		Sm = cu[1] / cu[0],
+		Tm = cu[1] / (1 - cu[0]),
+		S0 = 0.5,
+		k = 1 - S0 / Sm,
+		t = Tm / (C + L * Tm),
+		Lv = t * L,
+		Cv = t * C,
+		Lvt = toeInv(Lv),
+		Cvt = (Cv * Lvt) / Lv,
+		rs = oklabToLin(Lvt, a * Cvt, b * Cvt),
+		sc = Math.cbrt(1 / Math.max(rs[0], rs[1], rs[2], 0))
+	L /= sc
+	C /= sc
+	C = (C * toe(L)) / L
+	L = toe(L)
+	return [h, clamp01(((S0 + Tm) * Cv) / (Tm * S0 + Tm * k * Cv)), clamp01(L / Lv)]
+}
+
+const MODELS = {
+	okhsv: { toRgb: okhsvToRgb, fromRgb: rgbToOkhsv },
+	okhsl: { toRgb: okhslToRgb, fromRgb: rgbToOkhsl },
+}
+// #endregion
+
+// #region - WCAG & APCA
+const apcaY = c => 0.2126729 * c[0] ** 2.4 + 0.7151522 * c[1] ** 2.4 + 0.072175 * c[2] ** 2.4
+
+function apca(txt, bg) {
+	let
+		ty = apcaY(txt),
+		by = apcaY(bg)
+	if (ty < 0.022)
+		ty += (0.022 - ty) ** 1.414
+	if (by < 0.022)
+		by += (0.022 - by) ** 1.414
+	if (Math.abs(by - ty) < 0.0005)
+		return 0
+	let c
+	if (by > ty) {
+		c = (by ** 0.56 - ty ** 0.57) * 1.14
+		c = c < 0.1 ? 0 : c - 0.027
+	}
+	else {
+		c = (by ** 0.65 - ty ** 0.62) * 1.14
+		c = c > -0.1 ? 0 : c + 0.027
+	}
+	return c * 100
+}
+
+const wcagL = c => {
+	const f = x => (x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4)
+	return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2])
+}
+
+const wcag = (a, b) => {
+	const
+		x = wcagL(a),
+		y = wcagL(b)
+	return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05)
+}
+
+const textOn = c => (wcag(c, [0, 0, 0]) > wcag(c, [1, 1, 1]) ? '#000' : '#fff')
+// #endregion
+
+// #region - color utils
+const toHex = c => '#' + c
+	.map(x =>
+		Math.round(clamp01(x) * 255)
+			.toString(16)
+			.padStart(2, '0')
+	)
+	.join('')
+	.toUpperCase()
+
+function parseHex(s) {
+	const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s.trim())
+	if (!m)
+		return null
+	let x = m[1]
+	if (x.length === 3)
+		x = [...x].map(c => c + c).join('')
+	const n = parseInt(x, 16)
+	return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => v / 255)
+}
+
+const cssRgb = c => `rgb(${c.map(x => Math.round(x * 255)).join(',')})`
+
+const grad = (fn, n) => {
+	const s = []
+	for (let i = 0; i <= n; i++)
+		s.push(`${cssRgb(fn(i / n))} ${((i / n) * 100).toFixed(1)}%`)
+	return `linear-gradient(90deg,${s.join(',')})`
+}
+// #endregion
+
+// #region - model (stateful)
+const
+	DEFAULT_HEX = '#00AAFF',
+	state = {
+		model: 'okhsv',
+		view: 0,
+		h: 0,
+		s: 0,
+		v: 0,
+		harmony: 'none',
+		role: 'fg',
+		other: [0, 0, 0],
+	},
+
+	rgbOf = (h, s, v) => MODELS[state.model].toRgb(h, s, v),
+
+	HARMONIES = {
+		none: {label: 'None', o: [0], names: ['Base']},
+		analogous: {label: 'Analogous', o: [0, 30, -30], names: ['Base', '+30°', '-30°']},
+		complementary: {label: 'Complementary', o: [0, 180], names: ['Base', '180°']},
+		split: {label: 'Split complementary', o: [0, 150, 210], names: ['Base', '+150°', '-150°']},
+		triadic: {label: 'Triadic', o: [0, 120, 240], names: ['Base', '+120°', '-120°']},
+		tetradic: {label: 'Tetradic', o: [0, 60, 180, 240], names: ['Base', '60°', '180°', '240°']},
+		square: {label: 'Square', o: [0, 90, 180, 270], names: ['Base', '90°', '180°', '270°']},
+		mono: {label: 'Monochromatic', o: [0], names: ['Base', 'Tint', 'Muted', 'Shade'], mono: true},
+	},
+
+	/** tint (toward white), muted (toward gray), shade (toward black) */
+	MONO = [
+		{
+			okhsv: (s, v) => [s * 0.55, v + (1 - v) * 0.5],
+			okhsl: (s, l) => [s, l + (1 - l) * 0.5],
+		},
+		{
+			okhsv: (s, v) => [s * 0.4, v * 0.9],
+			okhsl: (s, l) => [s * 0.4, l],
+		},
+		{
+			okhsv: (s, v) => [s, v * 0.5],
+			okhsl: (s, l) => [s, l * 0.5],
+		},
+	]
+
+function harmonyColors() {
+	const {h, s, v} = state,
+		H = HARMONIES[state.harmony],
+		out = [{h, s, v}]
+	if (H.mono)
+		for (const f of MONO) {
+			const [s2, v2] = f[state.model](s, v)
+			out.push({h, s: clamp01(s2), v: clamp01(v2)})
+		}
+	else for (const o of H.o.slice(1)) out.push({h: wrap(h + o / 360), s, v})
+	return out
+}
+
+;[state.h, state.s, state.v] = rgbToOkhsv(...(parseHex(location.hash.slice(1)) || parseHex(DEFAULT_HEX)), 0)
+// #endregion
+
+// #region - geometry (stateful, CSS px, origin = canvas centre, y down)
+const STROKE = 2, GAP = 3 * STROKE
+
+let cssW = 0, devW = 0, devH = 0, bufW = 0, bufH = 0, quality = 1
+
+function geom() {
+	const
+		Ro = cssW / 2 - 12,
+		ringW = Math.max(20, Ro * .15),
+		Ri = Ro - ringW
+	return {
+		Ro,
+		Ri,
+		Rc: Ri - GAP,
+		Rm: (Ro + Ri) / 2,
+	}
+}
+
+/** angle for a 0..1 value: 0 at 12 o'clock, increasing clockwise */
+const ang = t => TAU * (t - .25)
+
+/** HWB */
+function triVerts(g) {
+	return [0, 1, 2].map(k => [
+		g.Rc * Math.cos(ang(state.h) + k * TAU / 3),
+		g.Rc * Math.sin(ang(state.h) + k * TAU / 3),
+	])
+}
+
+function toWeights(s, v) {
+	if (state.model === 'okhsv')
+		return [s * v, v * (1 - s), 1 - v]
+	const
+		m = 1 - Math.abs(2 * v - 1),
+		wH = s * m, wW = v - .5 * wH
+	return [wH, wW, 1 - wH - wW]
+}
+
+function fromWeights(w) {
+	if (state.model === 'okhsv') {
+		const v = 1 - w[2]
+		return [v > 1e-6 ? clamp01(w[0] / v) : 0, clamp01(v)]
+	}
+	const
+		l = w[1] + .5 * w[0],
+		m = 1 - Math.abs(2 * l - 1)
+	return [m > 1e-6 ? clamp01(w[0] / m) : 0, clamp01(l)]
+}
+
+const dot2 = (u, v) => u[0] * v[0] + u[1] * v[1]
+
+function bary(p, [a, b, c]) {
+	const
+		v0 = [b[0] - a[0], b[1] - a[1]],
+		v1 = [c[0] - a[0], c[1] - a[1]],
+		v2 = [p[0] - a[0], p[1] - a[1]],
+		d00 = dot2(v0, v0),
+		d01 = dot2(v0, v1),
+		d11 = dot2(v1, v1),
+		d20 = dot2(v2, v0),
+		d21 = dot2(v2, v1),
+		den = d00 * d11 - d01 * d01,
+		y = (d11 * d20 - d01 * d21) / den,
+		z = (d00 * d21 - d01 * d20) / den
+	return [1 - y - z, y, z]
+}
+
+function closestOnTri(p, V) {
+	let best = V[0], bd = Infinity
+	for (let i = 0; i < 3; i++) {
+		const
+			a = V[i],
+			b = V[(i + 1) % 3],
+			e = [b[0] - a[0], b[1] - a[1]],
+			t = clamp01(dot2([p[0] - a[0], p[1] - a[1]], e) / dot2(e, e)),
+			q = [a[0] + e[0] * t, a[1] + e[1] * t],
+			d = Math.hypot(p[0] - q[0], p[1] - q[1])
+		if (d < bd) {
+			bd = d
+			best = q
+		}
+	}
+	return best
+}
+
+function layoutItems() {
+	const
+		g = geom(),
+		cols = harmonyColors(),
+		V = triVerts(g),
+		main = cols[0]
+	return cols.map((c, i) => {
+		const
+			rgb = rgbOf(c.h, c.s, c.v),
+			it = {
+				rgb,
+				plane: null,
+				ring: null,
+				a: 0,
+				ringRgb: rgb,
+			}
+		if (!state.view) {
+			it.plane = [Math.cos(ang(c.h)) * c.s * g.Rc, Math.sin(ang(c.h)) * c.s * g.Rc]
+			if (!i || Math.abs(c.v - main.v) > 1e-3) {
+				it.a = ang(c.v)
+				it.ring = [Math.cos(it.a) * g.Rm, Math.sin(it.a) * g.Rm]
+				it.ringRgb = rgbOf(main.h, main.s, c.v)
+			}
+		}
+		else {
+			if (!i || state.harmony === 'mono') {
+				const w = toWeights(c.s, c.v)
+				it.plane = [0, 1].map(j => w[0] * V[0][j] + w[1] * V[1][j] + w[2] * V[2][j])
+			}
+			if (!i || hueDist(c.h, main.h) > 1e-4) {
+				it.a = ang(c.h)
+				it.ring = [Math.cos(it.a) * g.Rm, Math.sin(it.a) * g.Rm]
+				it.ringRgb = rgbOf(c.h, 1, state.model === 'okhsv' ? 1 : .5)
+			}
+		}
+		return it
+	})
+}
+// #endregion
+
+// #region - GLSL
+const VERTEX_SHADER = /*glsl*/ `#version 300 es
+void main(){
+	vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
+	gl_Position=vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`
+
+const FRAGMENT_SHADER = /*glsl*/ `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 outColor;
+uniform vec2 uRes;
+uniform float uStroke, uPx;
+uniform int uMode, uView, uCount;
+uniform vec3 uHSV, uR;       // uR = ring outer, ring inner, content radius (device px)
+uniform vec2 uTri[3];        // hue, white, black vertices
+uniform vec4 uPA[6], uPB[6]; // plane handle (xy, radius, visible) / ring bar (xy, angle, half thickness)
+uniform vec3 uCA[6], uCB[6]; // fills
+const float TAU = 6.28318530718f;
+const vec3 WR = vec3(4.0767416621f, -3.3077115913f, 0.2309699292f);
+const vec3 WG = vec3(-1.2684380046f, 2.6097574011f, -0.3413193965f);
+const vec3 WB = vec3(-0.0041960863f, -0.7034186147f, 1.7076147010f);
+const float K1 = 0.206f;
+const float K2 = 0.03f;
+const float K3 = (1.0f + K1) / (1.0f + K2);
+
+float toeInv(float x) {
+	return (x * x + K1 * x) / (K3 * (x + K2));
+}
+
+vec3 klms(float a, float b) {
+	return vec3(0.3963377774f * a + 0.2158037573f * b, -0.1055613458f * a - 0.0638541728f * b, -0.0894841775f * a - 1.2914855480f * b);
+}
+
+vec3 oklab2lin(vec3 c) {
+	vec3 q = c.x + klms(c.y, c.z);
+	vec3 lms = q * q * q;
+	return vec3(dot(WR, lms), dot(WG, lms), dot(WB, lms));
+}
+
+vec3 srgbTf(vec3 x) {
+	x = clamp(x, 0.0f, 1.0f);
+	return mix(12.92f * x, 1.055f * pow(x, vec3(1.0f / 2.4f)) - 0.055f, step(0.0031308f, x));
+}
+
+float maxSat(float a, float b) {
+	vec3 w;
+	float k0, k1, k2, k3, k4;
+	if(-1.88170328f * a - 0.80936493f * b > 1.0f) {
+		k0 = 1.19086277f;
+		k1 = 1.76576728f;
+		k2 = 0.59662641f;
+		k3 = 0.75515197f;
+		k4 = 0.56771245f;
+		w = WR;
+	}
+	else if(1.81444104f * a - 1.19445276f * b > 1.0f) {
+		k0 = 0.73956515f;
+		k1 = -0.45954404f;
+		k2 = 0.08285427f;
+		k3 = 0.12541070f;
+		k4 = 0.14503204f;
+		w = WG;
+	}
+	else {
+		k0 = 1.35733652f;
+		k1 = -0.00915799f;
+		k2 = -1.15130210f;
+		k3 = -0.50559606f;
+		k4 = 0.00692167f;
+		w = WB;
+	}
+	float S = k0 + k1 * a + k2 * b + k3 * a * a + k4 * a * b;
+	vec3 k = klms(a, b), q = 1.0f + S * k, lms = q * q * q;
+	float f = dot(w, lms), f1 = dot(w, 3.0f * k * q * q), f2 = dot(w, 6.0f * k * k * q);
+	return S - f * f1 / (f1 * f1 - 0.5f * f * f2);
+}
+
+vec2 findCusp(float a, float b) {
+	float S = maxSat(a, b);
+	vec3 rgb = oklab2lin(vec3(1.0f, S * a, S * b));
+	float L = pow(1.0f / max(max(rgb.r, rgb.g), rgb.b), 1.0f / 3.0f);
+	return vec2(L, L * S);
+}
+
+float halley(vec3 w, vec3 lms, vec3 d1, vec3 d2) {
+	float f = dot(w, lms) - 1.0f, f1 = dot(w, d1), f2 = dot(w, d2), u = f1 / (f1 * f1 - 0.5f * f * f2);
+	return u >= 0.0f ? -f * u : 1e5f;
+}
+
+float gamutT(float a, float b, float L1, float C1, float L0, vec2 cusp) {
+	if((L1 - L0) * cusp.y - (cusp.x - L0) * C1 <= 0.0f)
+		return cusp.y * L0 / (C1 * cusp.x + cusp.y * (L0 - L1));
+	float t = cusp.y * (L0 - 1.0f) / (C1 * (cusp.x - 1.0f) + cusp.y * (L0 - L1));
+	vec3 k = klms(a, b), dt = (L1 - L0) + C1 * k;
+	vec3 q = (L0 * (1.0f - t) + t * L1) + (t * C1) * k, lms = q * q * q, d1 = 3.0f * dt * q * q, d2 = 6.0f * dt * dt * q;
+	return t + min(halley(WR, lms, d1, d2), min(halley(WG, lms, d1, d2), halley(WB, lms, d1, d2)));
+}
+
+vec3 getCs(float L, float a, float b) {
+	vec2 cusp = findCusp(a, b);
+	float Cmax = gamutT(a, b, L, 1.0f, L, cusp);
+	float k = Cmax / min(L * cusp.y / cusp.x, (1.0f - L) * cusp.y / (1.0f - cusp.x));
+	float Sm = 0.11516993f + 1.0f / (7.44778970f + 4.15901240f * b + a * (-2.19557347f + 1.75198401f * b + a * (-2.13704948f - 10.02301043f * b + a * (-4.24894561f + 5.38770819f * b + 4.69891013f * a))));
+	float Tm = 0.11239642f + 1.0f / (1.61320320f - 0.68124379f * b + a * (0.40370612f + 0.90148123f * b + a * (-0.27087943f + 0.61223990f * b + a * (0.00299215f - 0.45399568f * b - 0.14661872f * a))));
+	float Ca = L * Sm, Cb = (1.0f - L) * Tm;
+	float Cmid = 0.9f * k * sqrt(sqrt(1.0f / (1.0f / (Ca * Ca * Ca * Ca) + 1.0f / (Cb * Cb * Cb * Cb))));
+	float C0a = L * 0.4f, C0b = (1.0f - L) * 0.8f;
+	return vec3(sqrt(1.0f / (1.0f / (C0a * C0a) + 1.0f / (C0b * C0b))), Cmid, Cmax);
+}
+
+vec3 okhsl2srgb(vec3 hsl) {
+	float h = hsl.x, s = hsl.y, l = hsl.z;
+	if(l >= 0.9999f)
+		return vec3(1.0f);
+	if(l <= 0.0001f)
+		return vec3(0.0f);
+	float a = cos(TAU * h), b = sin(TAU * h), L = toeInv(l);
+	vec3 cs = getCs(L, a, b);
+	float C0 = cs.x, Cm = cs.y, Cx = cs.z, C;
+	if(s < 0.8f) {
+		float t = 1.25f * s, k1 = 0.8f * C0, k2 = 1.0f - k1 / Cm;
+		C = t * k1 / (1.0f - k2 * t);
+	}
+	else {
+		float t = (s - 0.8f) / 0.2f, k1 = 0.2f * Cm * Cm * 1.5625f / C0, k2 = 1.0f - k1 / (Cx - Cm);
+		C = Cm + t * k1 / (1.0f - k2 * t);
+	}
+	return srgbTf(oklab2lin(vec3(L, C * a, C * b)));
+}
+
+vec3 okhsv2srgb(vec3 hsv) {
+	float h = hsv.x, s = hsv.y, v = hsv.z;
+	if(v <= 0.0f)
+		return vec3(0.0f);
+	float a = cos(TAU * h), b = sin(TAU * h);
+	vec2 cusp = findCusp(a, b);
+	float Sm = cusp.y / cusp.x, Tm = cusp.y / (1.0f - cusp.x), S0 = 0.5f, k = 1.0f - S0 / Sm;
+	float den = S0 + Tm - Tm * k * s, Lv = 1.0f - s * S0 / den, Cv = s * Tm * S0 / den;
+	float L = v * Lv, C = v * Cv, Lvt = toeInv(Lv), Cvt = Cv * Lvt / Lv, Ln = toeInv(L);
+	C = C * Ln / L;
+	L = Ln;
+	vec3 rs = oklab2lin(vec3(Lvt, a * Cvt, b * Cvt));
+	float sc = pow(1.0f / max(max(rs.r, rs.g), max(rs.b, 0.0f)), 1.0f / 3.0f);
+	return srgbTf(oklab2lin(vec3(L * sc, C * a * sc, C * b * sc)));
+}
+
+vec3 col(float h, float s, float v) {
+	return uMode == 0 ? okhsv2srgb(vec3(h, s, v)) : okhsl2srgb(vec3(h, s, v));
+}
+
+vec3 bary(vec2 p, vec2 a, vec2 b, vec2 c) {
+	vec2 v0 = b - a, v1 = c - a, v2 = p - a;
+	float d00 = dot(v0, v0), d01 = dot(v0, v1), d11 = dot(v1, v1), d20 = dot(v2, v0), d21 = dot(v2, v1), den = d00 * d11 - d01 * d01;
+	float v = (d11 * d20 - d01 * d21) / den, w = (d00 * d21 - d01 * d20) / den;
+	return vec3(1.0f - v - w, v, w);
+}
+
+vec3 triColor(vec2 p) {
+	vec3 w = max(bary(p, uTri[0], uTri[1], uTri[2]), 0.0f);
+	w /= (w.x + w.y + w.z);
+	float s, v;
+	if(uMode == 0) {
+		v = 1.0f - w.z;
+		s = w.x / max(v, 1e-4f);
+	}
+	else {
+		v = w.y + 0.5f * w.x;
+		s = w.x / max(1.0f - abs(2.0f * v - 1.0f), 1e-4f);
+	}
+	return col(uHSV.x, clamp(s, 0.0f, 1.0f), clamp(v, 0.0f, 1.0f));
+}
+
+float sdTriangle(vec2 p, vec2 p0, vec2 p1, vec2 p2) {
+	vec2 e0 = p1 - p0, e1 = p2 - p1, e2 = p0 - p2, v0 = p - p0, v1 = p - p1, v2 = p - p2;
+	vec2 pq0 = v0 - e0 * clamp(dot(v0, e0) / dot(e0, e0), 0.0f, 1.0f);
+	vec2 pq1 = v1 - e1 * clamp(dot(v1, e1) / dot(e1, e1), 0.0f, 1.0f);
+	vec2 pq2 = v2 - e2 * clamp(dot(v2, e2) / dot(e2, e2), 0.0f, 1.0f);
+	float s = sign(e0.x * e2.y - e0.y * e2.x);
+	vec2 d = min(min(vec2(dot(pq0, pq0), s * (v0.x * e0.y - v0.y * e0.x)), vec2(dot(pq1, pq1), s * (v1.x * e1.y - v1.y * e1.x))), vec2(dot(pq2, pq2), s * (v2.x * e2.y - v2.y * e2.x)));
+	return -sqrt(d.x) * sign(d.y);
+}
+
+float sdRoundBox(vec2 p, vec2 b, float r) {
+	vec2 q = abs(p) - b + r;
+	return length(max(q, 0.0f)) + min(max(q.x, q.y), 0.0f) - r;
+}
+
+float ign(vec2 p) {
+	return fract(52.9829189f * fract(dot(p, vec2(0.06711056f, 0.00583715f))));
+}
+
+vec4 over(vec4 dst, vec3 c, float a) {
+	return vec4(c * a + dst.rgb * (1.0f - a), a + dst.a * (1.0f - a));
+}
+
+float cov(float d) {
+	return clamp(0.5f - d, 0.0f, 1.0f);
+}
+
+// handles: two strokes outside the edge, black (inner) then white (outer)
+vec4 shape(vec4 dst, float d, vec3 fill) {
+	dst = over(dst, vec3(1.0f), cov(d - 2.0f * uStroke));
+	dst = over(dst, vec3(0.0f), cov(d - uStroke));
+	return over(dst, fill, cov(d));
+}
+
+// Disc: three opaque strokes, from the fill outward: black, white, black
+vec4 panel(vec4 dst, float d, vec3 fill) {
+	float w0 = uStroke, w1 = 2.0f * uStroke, w2 = 3.0f * uStroke;
+	dst = over(dst, vec3(0.0f), cov(d - w2));
+	dst = over(dst, vec3(1.0f), cov(d - w1));
+	dst = over(dst, vec3(0.0f), cov(d - w0));
+	return over(dst, fill, cov(d));
+}
+
+// Triangle only: two strokes (white outer + black inner) — outer black removed
+vec4 panelTri(vec4 dst, float d, vec3 fill) {
+	float w0 = uStroke, w1 = 2.0f * uStroke;
+	dst = over(dst, vec3(1.0f), cov(d - w1)); // outer white
+	dst = over(dst, vec3(0.0f), cov(d - w0)); // inner black
+	return over(dst, fill, cov(d));
+}
+
+// Ring: black + white always; the third (outermost) black only when keepBlack
+vec4 panelRing(vec4 dst, float d, vec3 fill, bool keepBlack) {
+	float w0 = uStroke, w1 = 2.0f * uStroke, w2 = 3.0f * uStroke;
+	if(keepBlack)
+		dst = over(dst, vec3(0.0f), cov(d - w2));
+	dst = over(dst, vec3(1.0f), cov(d - w1));
+	dst = over(dst, vec3(0.0f), cov(d - w0));
+	return over(dst, fill, cov(d));
+}
+
+void main() {
+	vec2 p = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) - 0.5f * uRes;
+	float r = length(p), t = fract(atan(p.y, p.x + 1e-4f) / TAU + 0.25f);
+	float Ro = uR.x, Ri = uR.y, Rc = uR.z, lim = 2.0f * uStroke + 1.0f, limP = 3.0f * uStroke + 1.0f;
+	float n = (ign(gl_FragCoord.xy) - 0.5f) / 255.0f;
+	vec4 c = vec4(0.0f);
+	float dRing = abs(r - 0.5f * (Ro + Ri)) - 0.5f * (Ro - Ri);
+	if(dRing < limP) {
+		vec3 f = vec3(0.0f);
+		if(dRing < 1.0f) {
+			if(uView == 0)
+				f = col(uHSV.x, uHSV.y, t);                 // value / lightness ring
+			else
+				f = col(t, 1.0f, uMode == 0 ? 1.0f : 0.5f); // hue ring
+		}
+		// outer edge: third black always dropped
+		// inner edge: dropped in triangle view; kept in disc view (shared with the disc outline)
+		bool keepBlack = r < 0.5f * (Ro + Ri) && uView == 0;
+		c = panelRing(c, dRing, f + n, keepBlack);
+	}
+	float dIn = (uView == 0) ? r - Rc : sdTriangle(p, uTri[0], uTri[1], uTri[2]);
+	if(dIn < limP) {
+		vec3 f = vec3(0.0f);
+		if(dIn < 1.0f) {
+			if(uView == 0)
+				f = col(t, min(r / Rc, 1.0f), uHSV.z);      // hue-saturation disc
+			else
+				f = triColor(p);                            // saturation-value/lightness triangle
+		}
+		c = (uView == 0) ? panel(c, dIn, f + n) : panelTri(c, dIn, f + n);
+	}
+	for(int k = 5; k >= 0; k--) {                           // secondary handles first, main (0) last
+		if(k >= uCount)
+			continue;
+		vec4 pb = uPB[k];
+		if(pb.w > 0.0f) {
+			vec2 q = p - pb.xy;
+			float ca = cos(pb.z), sa = sin(pb.z);
+			vec2 l = vec2(ca * q.x + sa * q.y, -sa * q.x + ca * q.y);
+			float d = sdRoundBox(l, vec2(0.5f * (Ro - Ri) + 4.0f * uPx, pb.w), pb.w);
+			if(d < lim)
+				c = shape(c, d, uCB[k]);
+		}
+		vec4 pa = uPA[k];
+		if(pa.w > 0.5f) {
+			float d = length(p - pa.xy) - pa.z;
+			if(d < lim)
+				c = shape(c, d, uCA[k]);
+		}
+	}
+	outColor = c;
+}`
+// #endregion
+
+// #region - WebGL (stateful)
+const canvas = $('#cv')
+
+let gl = null, prog = null, U = {}
+
+function makeProgram() {
+	const
+		sh = (type, src) => {
+			const s = gl.createShader(type)
+			gl.shaderSource(s, src)
+			gl.compileShader(s)
+			if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+				throw new Error(gl.getShaderInfoLog(s))
+			return s
+		},
+		p = gl.createProgram()
+	gl.attachShader(p, sh(gl.VERTEX_SHADER, VERTEX_SHADER))
+	gl.attachShader(p, sh(gl.FRAGMENT_SHADER, FRAGMENT_SHADER))
+	gl.linkProgram(p)
+	if (!gl.getProgramParameter(p, gl.LINK_STATUS))
+		throw new Error(gl.getProgramInfoLog(p))
+	return p
+}
+
+function initGL() {
+	gl = canvas.getContext('webgl2', {
+		antialias: false,
+		alpha: true,
+		premultipliedAlpha: true,
+		depth: false,
+		stencil: false,
+		powerPreference: 'high-performance',
+	})
+	if (!gl) {
+		$('#col0').classList.add('no-webgl')
+		$('.stage').textContent = 'WebGL 2 is not available in this browser.'
+		return
+	}
+	prog = makeProgram()
+	U = {}
+	for (const n of ['uRes', 'uPx', 'uStroke', 'uMode', 'uView', 'uCount', 'uHSV', 'uR', 'uTri', 'uPA', 'uPB', 'uCA', 'uCB'])
+		U[n] = gl.getUniformLocation(prog, n)
+}
+
+function firstFrame() {
+	initGL()
+	invalidate()
+}
+
+canvas.addEventListener('webglcontextlost', e => {
+	e.preventDefault()
+	gl = null
+})
+
+canvas.addEventListener('webglcontextrestored', firstFrame)
+
+const
+	PA = new Float32Array(24),
+	PB = new Float32Array(24),
+	CA = new Float32Array(18),
+	CB = new Float32Array(18)
+
+function draw(its = layoutItems()) {
+	if (!gl || gl.isContextLost() || !cssW)
+		return
+	const
+		px = bufW / cssW,
+		g = geom()
+	PA.fill(0)
+	PB.fill(0)
+	its.forEach((it, i) => {
+		CA.set(it.rgb, i * 3)
+		CB.set(it.ringRgb, i * 3)
+		if (it.plane)
+			PA.set([it.plane[0] * px, it.plane[1] * px, (i ? 6.5 : 10) * px, 1], i * 4)
+		if (it.ring)
+			PB.set([it.ring[0] * px, it.ring[1] * px, it.a, (i ? 3.5 : 5.5) * px], i * 4)
+	})
+	gl.viewport(0, 0, bufW, bufH)
+	gl.useProgram(prog)
+	gl.uniform2f(U.uRes, bufW, bufH)
+	gl.uniform1f(U.uPx, px)
+	gl.uniform1f(U.uStroke, STROKE * px)
+	gl.uniform1i(U.uMode, state.model === 'okhsv' ? 0 : 1)
+	gl.uniform1i(U.uView, state.view)
+	gl.uniform1i(U.uCount, its.length)
+	gl.uniform3f(U.uHSV, state.h, state.s, state.v)
+	gl.uniform3f(U.uR, g.Ro * px, g.Ri * px, g.Rc * px)
+	gl.uniform2fv(U.uTri, new Float32Array(triVerts(g).flat().map(x => x * px)))
+	gl.uniform4fv(U.uPA, PA)
+	gl.uniform4fv(U.uPB, PB)
+	gl.uniform3fv(U.uCA, CA)
+	gl.uniform3fv(U.uCB, CB)
+	gl.clearColor(0, 0, 0, 0)
+	gl.clear(gl.COLOR_BUFFER_BIT)
+	gl.drawArrays(gl.TRIANGLES, 0, 3)
+}
+
+/** real device pixels + dynamic pixel ratio */
+function setBuffer() {
+	bufW = Math.max(1, Math.round(devW * quality))
+	bufH = Math.max(1, Math.round(devH * quality))
+	if (canvas.width !== bufW || canvas.height !== bufH) {
+		canvas.width = bufW
+		canvas.height = bufH
+	}
+}
+
+let lastCss = [0, 0]
+
+function measure(w, h, dp) {
+	lastCss = [w, h]
+	cssW = w
+	devW = dp ? dp.inlineSize : Math.round(w * devicePixelRatio)
+	devH = dp ? dp.blockSize : Math.round(h * devicePixelRatio)
+	setBuffer()
+	draw()
+}
+
+const ro = new ResizeObserver(entries => {
+	const
+		e = entries[entries.length - 1],
+		cs = [].concat(e.contentBoxSize)[0]
+	measure(cs.inlineSize, cs.blockSize, e.devicePixelContentBoxSize && e.devicePixelContentBoxSize[0])
+})
+
+try {
+	ro.observe(canvas, {box: 'device-pixel-content-box'})
+}
+catch {
+	ro.observe(canvas)
+	const watch = () => matchMedia(`(resolution:${devicePixelRatio}dppx)`)
+		.addEventListener('change', () => {
+			measure(lastCss[0], lastCss[1])
+			watch()
+		}, { once: true })
+	watch()
+}
+
+// render loop (on demand) with adaptive resolution while dragging
+let raf = 0, dirty = false, lastT = 0, slow = 0
+
+function invalidate() {
+	dirty = true
+	if (!raf)
+		raf = requestAnimationFrame(frame)
+}
+
+function frame(t) {
+	raf = 0
+	if (!dirty)
+		return
+	dirty = false
+	const dt = t - lastT
+	lastT = t
+	if (drag && dt > 34 && dt < 300) {
+		if (++slow >= 6 && quality > .5) {
+			quality = Math.max(.5, quality * .75)
+			slow = 0
+			setBuffer()
+		}
+	}
+	else if (dt < 30)
+		slow = 0
+	const its = layoutItems()
+	syncUI(its)
+	draw(its)
+}
+// #endregion
+
+// #region - pointer input (stateful)
+let drag = null
+
+const local = e => {
+	const r = canvas.getBoundingClientRect()
+	return [
+		e.clientX - r.left - r.width / 2,
+		e.clientY - r.top - r.height / 2,
+	]
+}
+
+canvas.addEventListener('contextmenu', e => e.preventDefault())
+canvas.addEventListener('touchstart', e => e.preventDefault(), {passive: false})
+
+/** exactly as displayed, including outline */
+function hitHandle(p, g) {
+	const
+		items = layoutItems(),
+		reach = 2 * STROKE,
+		halfLen = (g.Ro - g.Ri) / 2 + 4
+	for (let i = 0; i < items.length; i++) {
+		// topmost first
+		const it = items[i]
+		if (it.plane) {
+			const d = Math.hypot(it.plane[0] - p[0], it.plane[1] - p[1]) - (i ? 6.5 : 10)
+			if (d < reach)
+				return {
+					target: 'plane',
+					anchor: i,
+					it,
+				}
+		}
+		if (it.ring) {
+			const
+				r = i ? 3.5 : 5.5,
+				c = Math.cos(it.a),
+				s = Math.sin(it.a),
+				qx = p[0] - it.ring[0],
+				qy = p[1] - it.ring[1],
+				// radial
+				lx = Math.abs(c * qx + s * qy),
+				// tangential
+				ly = -s * qx + c * qy,
+				// capsule distance
+				d = Math.hypot(Math.max(lx - (halfLen - r), 0), ly) - r
+			if (d < reach)
+				return {
+					target: 'ring',
+					anchor: i,
+					it,
+				}
+		}
+	}
+	return null
+}
+
+canvas.addEventListener('pointerdown', e => {
+	if (drag || (e.pointerType === 'mouse' && e.button !== 0))
+		return
+	const
+		p = local(e),
+		g = geom(),
+		r = Math.hypot(p[0], p[1])
+	if (r > g.Ro + 8)
+		return
+	const
+		hit = hitHandle(p, g),
+		target = hit ? hit.target : r < (g.Rc + g.Ri) / 2 ? 'plane' : 'ring'
+	let 
+		grab = null,
+		dt = 0,
+		last = null
+	if (hit && target === 'plane')
+		grab = [hit.it.plane[0] - p[0], hit.it.plane[1] - p[1]]
+	if (hit && target === 'ring') {
+		dt = hit.it.a / TAU - Math.atan2(p[1], p[0]) / TAU
+		dt -= Math.round(dt)
+		if (state.view === 0)
+			last = hit.it.a / TAU + 0.25
+	}
+	e.preventDefault()
+	if (document.activeElement && document.activeElement !== document.body)
+		document.activeElement.blur()
+	canvas.setPointerCapture(e.pointerId)
+	drag = {
+		id: e.pointerId,
+		target,
+		anchor: hit ? hit.anchor : 0,
+		last,
+		grab,
+		dt,
+	}
+	if (!hit)
+		apply(p)
+})
+
+canvas.addEventListener('pointermove', e => {
+	if (drag && e.pointerId === drag.id) {
+		e.preventDefault()
+		apply(local(e))
+	}
+})
+
+const endDrag = e => {
+	if (!drag || e.pointerId !== drag.id)
+		return
+	drag = null
+	slow = 0
+	if (quality < 1) {
+		quality = 1
+		setBuffer()
+	}
+	invalidate()
+}
+
+;['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => canvas.addEventListener(n, endDrag))
+
+function apply(p) {
+	if (drag.grab)
+		p = [p[0] + drag.grab[0], p[1] + drag.grab[1]]
+	const
+		g = geom(),
+		t = wrap(Math.atan2(p[1], p[0]) / TAU + 0.25 + drag.dt),
+		// dragging a secondary harmony handle keeps *that* colour under the finger
+		off = drag.anchor > 0 && state.harmony !== 'mono'
+			? HARMONIES[state.harmony].o[drag.anchor] / 360 : 0,
+		seam = x => {
+			if (drag.last !== null && Math.abs(x - drag.last) > 0.5)
+				x = drag.last > 0.5 ? 1 : 0
+			return (drag.last = x)
+		}
+	if (state.view === 0) {
+		if (drag.target === 'ring')
+			state.v = seam(t)
+		else {
+			state.h = wrap(t - off)
+			state.s = clamp01(Math.hypot(p[0], p[1]) / g.Rc)
+		}
+	}
+	else if (drag.target === 'ring')
+		state.h = wrap(t - off)
+	else {
+		const V = triVerts(g)
+		let w = bary(p, V)
+		if (w.some(x => x < 0))
+			w = bary(closestOnTri(p, V), V)
+		w = w.map(x => Math.max(0, x))
+		const sum = w[0] + w[1] + w[2]
+		;[state.s, state.v] = fromWeights(w.map(x => x / sum))
+	}
+	invalidate()
+}
+// #endregion
+
+// #region - view (stateful)
+const
+	rng = [0, 1, 2].map(i => $('#r' + i)),
+	num = [0, 1, 2].map(i => $('#n' + i)),
+	SC = [360, 100, 100],
+	KEY = ['h', 's', 'v'],
+	hexEl = $('#hex'),
+	otherEl = $('#other'),
+	apl = $('#apl')
+
+let lastUrl = ''
+
+$('#harm').innerHTML = Object.entries(HARMONIES)
+	.map(([k, v]) => `<option value="${k}">${v.label}</option>`)
+	.join('')
+
+function setChan(i, v) {
+	state[KEY[i]] = clamp01(v / SC[i])
+	invalidate()
+}
+
+rng.forEach((el, i) => el.addEventListener('input', () => setChan(i, +el.value)))
+
+num.forEach((el, i) => {
+	el.addEventListener('input', () => {
+		const v = parseFloat(el.value)
+		if (Number.isFinite(v))
+			setChan(i, v)
+	})
+	el.addEventListener('blur', invalidate)
+})
+
+hexEl.addEventListener('input', () => {
+	const c = parseHex(hexEl.value)
+	hexEl.classList.toggle('bad', !c)
+	if (!c)
+		return
+	;[state.h, state.s, state.v] = MODELS[state.model].fromRgb(c[0], c[1], c[2], state.h)
+	invalidate()
+})
+
+hexEl.addEventListener('blur', invalidate)
+
+otherEl.addEventListener('input', () => {
+	const c = parseHex(otherEl.value)
+	otherEl.classList.toggle('bad', !c)
+	if (c) {
+		state.other = c
+		invalidate()
+	}
+})
+
+otherEl.addEventListener('blur', invalidate)
+
+$('#harm').addEventListener('change', e => {
+	state.harmony = e.target.value
+	invalidate()
+})
+
+$('#modelSeg').addEventListener('click', e => {
+	const b = e.target.closest('button')
+	if (!b || b.dataset.v === state.model)
+		return
+	const c = rgbOf(state.h, state.s, state.v)
+	state.model = b.dataset.v
+	;[state.h, state.s, state.v] = MODELS[state.model].fromRgb(c[0], c[1], c[2], state.h)
+	invalidate()
+})
+
+$('#viewSeg').addEventListener('click', e => {
+	const b = e.target.closest('button')
+	if (b) {
+		state.view = +b.dataset.v
+		invalidate()
+	}
+})
+
+$('#roleSeg').addEventListener('click', e => {
+	const b = e.target.closest('button')
+	if (b) {
+		state.role = b.dataset.v
+		invalidate()
+	}
+})
+
+let toastTimer
+
+const toast = m => {
+	const el = $('#toast')
+	el.textContent = m
+	el.classList.add('on')
+	clearTimeout(toastTimer)
+	toastTimer = setTimeout(() => el.classList.remove('on'), 1200)
+}
+
+$('#sws').addEventListener('click', e => {
+	const b = e.target.closest('button')
+	if (!b)
+		return
+	;(navigator.clipboard ? navigator.clipboard.writeText(b.dataset.hex) : Promise.reject()).then(
+		() => toast('Copied ' + b.dataset.hex),
+		() => toast(b.dataset.hex)
+	)
+})
+
+function syncUI(its) {
+	const
+		rgb = its[0].rgb,
+		hex = toHex(rgb),
+		act = document.activeElement
+	if (hex !== shownHex) {
+		const first = shownHex === null
+		shownHex = hex
+		if (!first)
+			scheduleHash(hex)
+	}
+	;[state.h * 360, state.s * 100, state.v * 100].forEach((x, i) => {
+		if (act !== rng[i])
+			rng[i].value = x
+		if (act !== num[i])
+			num[i].value = +x.toFixed(1)
+	})
+	if (act !== hexEl) {
+		hexEl.value = hex
+		hexEl.classList.remove('bad')
+	}
+	$('#hexSw').style.background = hex
+	$('#l2').textContent = state.model === 'okhsv' ? 'V' : 'L'
+	const
+		pure = state.model === 'okhsv' ? 1 : 0.5,
+		gs = [
+			grad(t => rgbOf(t, 1, pure), 360),
+			grad(t => rgbOf(state.h, t, state.v), 100),
+			grad(t => rgbOf(state.h, state.s, t), 100),
+		]
+	rng.forEach((el, i) => {
+		el.style.setProperty('--g', gs[i])
+		el.style.setProperty('--c', hex)
+	})
+	$$('#modelSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === state.model))
+	$$('#viewSeg button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.v === state.view))
+	$$('#roleSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === state.role))
+	$('#harm').value = state.harmony
+	// harmonies
+	const
+		box = $('#sws'),
+		names = HARMONIES[state.harmony].names
+	while (box.children.length > its.length)
+		box.lastChild.remove()
+	while (box.children.length < its.length) {
+		const d = document.createElement('div')
+		d.className = 'swi'
+		d.innerHTML = '<button class="sw" type="button"></button><span class="lbl"></span>'
+		box.append(d)
+	}
+	its.forEach((it, i) => {
+		const
+			d = box.children[i],
+			b = d.firstChild,
+			h = toHex(it.rgb)
+		b.style.background = h
+		b.style.color = textOn(it.rgb)
+		b.textContent = h
+		b.dataset.hex = h
+		d.lastChild.textContent = names[i]
+	})
+	// contrast
+	const
+		asText = state.role === 'fg',
+		fg = asText ? rgb : state.other,
+		bg = asText ? state.other : rgb
+	$('#otherLab').textContent = asText ? 'BG' : 'FG'
+	if (act !== otherEl) {
+		otherEl.value = toHex(state.other)
+		otherEl.classList.remove('bad')
+	}
+	$('#otherSw').style.background = toHex(state.other)
+	const pv = $('#pv')
+	pv.style.color = toHex(fg)
+	pv.style.background = toHex(bg)
+	const
+		ratio = wcag(fg, bg),
+		lc = apca(fg, bg),
+		a = Math.abs(lc)
+	$('#wc').textContent = (Math.floor(ratio * 100) / 100).toFixed(2) + ':1'
+	$('#wcc').innerHTML = [
+		['AA', 4.5],
+		['AA large', 3],
+		['AAA', 7],
+		['AAA large', 4.5],
+	]
+		.map(([n, t]) => `<span class="chip ${ratio >= t ? 'ok' : 'no'}">${ratio >= t ? '✓' : '✕'} ${n}</span>`)
+		.join('')
+	$('#ap').textContent = 'Lc ' + lc.toFixed(1)
+	$('#apn').textContent =
+		a >= 90 ? 'preferred body text' :
+		a >= 75 ? 'body text' :
+		a >= 60 ? 'content text' :
+		a >= 45 ? 'large text' :
+		a >= 30 ? 'spot text only' :
+		a >= 15 ? 'non-text only' : 'too low'
+	const url = `https://apcacontrast.com/?BG=${toHex(bg).slice(1)}&TXT=${toHex(fg).slice(1)}`
+	if (url !== lastUrl) {
+		lastUrl = url
+		apl.setAttribute('href', url)
+	}
+}
+// #endregion
+
+// #region - URL fragment sync (stateful)
+const HASH_DELAY = 300
+
+let hashTimer = 0, pendingHex = '', shownHex = null
+
+function writeHash() {
+	hashTimer = 0
+	const next = '#' + pendingHex; pendingHex = ''
+	if (next === '#' || location.hash.toLowerCase() === next)
+		return
+	try {
+		history.replaceState(history.state, '', next)
+	}
+	// file:// or sandboxed iframe
+	catch {}
+}
+
+function scheduleHash(hex) {
+	const
+		h = hex.slice(1).toLowerCase(),
+		cur = parseHex(location.hash.slice(1))
+	clearTimeout(hashTimer)
+	hashTimer = 0
+	pendingHex = ''
+	if (cur && toHex(cur).slice(1).toLowerCase() === h)
+		return
+	pendingHex = h
+	hashTimer = setTimeout(writeHash, HASH_DELAY)
+}
+
+const flushHash = () => {
+	if (hashTimer) {
+		clearTimeout(hashTimer)
+		writeHash()
+	}
+}
+
+addEventListener('pagehide', flushHash)
+document.addEventListener('visibilitychange', () => {
+	if (document.hidden)
+		flushHash()
+})
+
+addEventListener('hashchange', () => {
+	const c = parseHex(location.hash.slice(1))
+	if (!c)
+		return
+	if (toHex(c) === toHex(rgbOf(state.h, state.s, state.v)))
+		return
+	clearTimeout(hashTimer)
+	hashTimer = 0
+	pendingHex = ''
+	[state.h, state.s, state.v] = MODELS[state.model].fromRgb(c[0], c[1], c[2], state.h)
+	invalidate()
+})
+// #endregion
+
+firstFrame()
+
+// #region - service worker registration
+async function getSwRegistration(swContainer, scriptUrl, scope) {
+	if (!swContainer.controller) {
+		const url = new URL(location.href)
+		url.search = ''
+		url.hash = ''
+		const
+			registration = await swContainer.register(scriptUrl, { scope }),
+			worker = registration.active ?? registration.waiting ?? registration.installing
+		if (worker?.state !== 'activated')
+			await new Promise(resolve => worker?.addEventListener('statechange', () => {
+				if (worker.state === 'activated')
+					resolve()
+			}))
+		await new Promise(() => {})
+		return registration
+	}
+	else
+		return await swContainer.getRegistration()
+}
+
+async function initSw(scriptUrl, scope) {
+	const swContainer = navigator.serviceWorker
+	if (swContainer)
+		try {
+			let swRegistration = await getSwRegistration(swContainer, scriptUrl, scope)
+			if (swRegistration) {
+				try {
+					swRegistration = await swRegistration.update()
+				}
+				catch (error) {
+					console.error('Error updating service worker', error)
+				}
+				return swRegistration
+			}
+			else
+				console.error('Unable to update service worker')
+		}
+		catch (error) {
+			console.error('Error initializing service worker', error)
+		}
+	else
+		console.error('Unable to initialize service worker')
+}
+
+const swRegistration = await initSw('./service-worker.js', './')
+// #endregion
+})()
+</script>
+<!-- #endregion -->
+</body>
+</html>
